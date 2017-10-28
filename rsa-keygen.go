@@ -2,7 +2,7 @@ package main
 
 import (
   "fmt"
-  //"math/rand"
+  "math/rand"
   "strconv"
 )
 
@@ -18,8 +18,10 @@ func main() {
   // Check for a prime number
   // I'm hardcoding the value of K in primality test to 5
   accuracyFactor := 5;
-  isaPrimeNumber(randomNumber,accuracyFactor)
-
+  resultWhetherPrime := isaPrimeNumber(randomNumber,accuracyFactor)
+  if (resultWhetherPrime) {
+    fmt.Println("Got a prime number, in main")
+  }
 }
 
 func squareAndMultiple(a int, b int, c int) (int) {
@@ -44,11 +46,14 @@ func squareAndMultiple(a int, b int, c int) (int) {
 
 }
 
-func isaPrimeNumber(number int, accuracyFactor int) {
+func isaPrimeNumber(number int, accuracyFactor int) (bool) {
 
   // First finding the value of r, d as per equation ;
   // d * 2pow(r) = n - 1
-
+  if ((number % 2) == 0) {
+    // Case where the /dev/urandom has generated an even number
+    return false
+  } else {
   varNumber := float64(number - 1)
   r := 2
   // exponentitalR is 2powr(r)
@@ -73,6 +78,41 @@ func isaPrimeNumber(number int, accuracyFactor int) {
   exponentitalR = float64(squareAndMultiple(2,r, 10000000000))
   d := (varNumber/exponentitalR)
 
+  for i := 0; i < accuracyFactor; i++ {
+  millerRabinPrimalityTestResult := millerRabinPrimalityTest(number, int64(d),
+  r)
 
+  if (millerRabinPrimalityTestResult == false ) {
+    return false
+      }
+    }
+    return true
+  }
+}
+
+
+func millerRabinPrimalityTest(number int, d int64, r int) (bool) {
+
+  // As per millerRabinPrimalityTest, we select an "a" in range[2,n-2]
+  // Compute a value x = pow(a,d) % number and return true or false
+  // based on some checks
+  a := rand.Int31n(int32(number) - 2)
+  x := squareAndMultiple(int(a), int(d),number)
+
+  if((x == 1) || (x == (number - 1))) {
+      return true
+    }
+
+  loopCount := r -1
+  for i := 0; i < loopCount; i++ {
+    x = (x * x) % number
+    if (x == 1) {
+      return false
+    }
+    if (x == (number - 1)) {
+      return true
+    }
+  }
+  return false
 
 }

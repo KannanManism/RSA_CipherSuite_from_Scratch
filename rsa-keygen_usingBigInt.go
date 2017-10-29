@@ -2,28 +2,48 @@ package main
 
 import (
   "fmt"
-  "math/rand"
+  //"math/rand"
   "math/big"
+  crypt "crypto/rand"
 )
 
 func main() {
 
-  //randomNumber := rand.Int31n(65536)
-  randomNumber := big.NewInt()
-  fmt.Println("Random number is ", randomNumber)
 
-  exponentiatedValue := squareAndMultiple(big.NewInt(7),
-  big.NewInt(4),big.NewInt(13))
+//  randomNumber := big.NewInt(3694751408701)
 
-  fmt.Println(exponentiatedValue)
-
+    randomNumber := generateNumber()
   // Check for a prime number
   // I'm hardcoding the value of K in primality test to 5
   accuracyFactor := big.NewInt(5);
-  resultWhetherPrime := isaPrimeNumber(randomNumber,accuracyFactor)
-  if (resultWhetherPrime) {
-    fmt.Println("Got a prime number, in main")
+  resultWhetherPrime := false
+
+  for (!resultWhetherPrime) {
+      randomNumber = generateNumber()
+      resultWhetherPrime = isaPrimeNumber(randomNumber,accuracyFactor)
+      if (resultWhetherPrime) {
+        break
+      }
+    }
+
+    if resultWhetherPrime {
+      fmt.Println("Got a prime", randomNumber)
+    }
+}
+
+func generateNumber() (*big.Int) {
+
+  n := 64
+  b := make([]byte, n)
+  _, y := crypt.Read(b)
+  if y != nil {
+    fmt.Println("Some error")
   }
+
+  z := big.NewInt(0)
+  randomNumber := z.SetBytes(b)
+
+  return randomNumber
 }
 
 func squareAndMultiple(a *big.Int, b *big.Int, c *big.Int) (*big.Int) {
@@ -124,7 +144,8 @@ func millerRabinPrimalityTest(number *big.Int, d *big.Int,
   // based on some checks
   numberTemp := big.NewInt(0)
   numberTemp = (numberTemp.Sub(number, big.NewInt(4)))
-  aTemp := rand.Int63n(numberTemp.Int64()) + 2
+  //aTemp := rand.Int63n(numberTemp.Int64()) + 2
+  aTemp := int64(100001)
   a := big.NewInt(aTemp)
 
   x := squareAndMultiple(a,d,number)

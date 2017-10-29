@@ -16,6 +16,7 @@ func main() {
   fmt.Println("Q is ", q)
 
   rsaAlgorithmKeyGeneration(p,q)
+
 }
 
 func rsaAlgorithmKeyGeneration(p *big.Int, q *big.Int) {
@@ -36,11 +37,35 @@ func rsaAlgorithmKeyGeneration(p *big.Int, q *big.Int) {
   e := generatePublicKey(phiOfN)
   fmt.Println(" Public Key is  ",e)
 
+  eCopy := big.NewInt(0)
+  eCopy = eCopy.Set(e)
+
+  phiOfNCopy := big.NewInt(0)
+  phiOfNCopy = phiOfNCopy.Set(phiOfN)
   // Testing Extended Euclidean Algorithm
-  d,x,y := extendedEuclideanAlgorithm(e,phiOfN)
+  d,x,y := extendedEuclideanAlgorithm(eCopy,phiOfNCopy)
+
   fmt.Println(" d is ", d, " and x is ", x, " and y is ", y)
 
+
+  if (x.Cmp(big.NewInt(0)) == -1) {
+    fmt.Println("Getting a negative value for X, so doing a mod operation")
+    x = x.Add(x,phiOfN)
+
+  }
+  privateKey := big.NewInt(0)
+  privateKey = privateKey.Set(x)
+
+  fmt.Println("Private Key is ", privateKey)
+
+  temp := big.NewInt(0)
+  temp = temp.Mul(e,privateKey)
+  temp = temp.Mod(temp, phiOfN)
+
+  fmt.Println("Printing", temp)
+
 }
+
 
 func extendedEuclideanAlgorithm(a *big.Int, b *big.Int) (*big.Int,*big.Int,
 *big.Int) {

@@ -32,6 +32,94 @@ func rsaAlgorithmKeyGeneration(p *big.Int, q *big.Int) {
   phiOfN = phiOfN.Mul(pSub1,qSub1)
 
   fmt.Println(" PhiOfN is ", phiOfN)
+
+  e := generatePublicKey(phiOfN)
+  fmt.Println(" Public Key is  ",e)
+
+  // Testing Extended Euclidean Algorithm
+  d,x,y := extendedEuclideanAlgorithm(e,phiOfN)
+  fmt.Println(" d is ", d, " and x is ", x, " and y is ", y)
+
+}
+
+func extendedEuclideanAlgorithm(a *big.Int, b *big.Int) (*big.Int,*big.Int,
+*big.Int) {
+
+  // Implementing the extendedEuclideanAlgorithm as per the pseudo-code
+  // mentioned in the handbook of applied cryptography
+  // http://cacr.uwaterloo.ca/hac/about/chap2.pdf (See Section 2.107)
+
+  d := big.NewInt(0)
+  x := big.NewInt(0)
+  y := big.NewInt(0)
+
+  if (b.Cmp(big.NewInt(0)) == 0) {
+
+    d = d.Set(a)
+    x = big.NewInt(1)
+    y = big.NewInt(0)
+    fmt.Println("First check return")
+    return d,x,y
+  }
+
+  //  2 as per the Handbook of Applied cryptography
+  x2 := big.NewInt(1)
+  x1 := big.NewInt(0)
+  y2 := big.NewInt(0)
+  y1 := big.NewInt(1)
+
+  // Setting big.Ints for the loop as we can't simple add (or) multiply
+  // like Integers
+  q := big.NewInt(0)
+  r := big.NewInt(0)
+  qb := big.NewInt(0)
+  qx1 := big.NewInt(0)
+  qy1 := big.NewInt(0)
+
+  for ((b.Cmp(big.NewInt(0))) == 1) {
+
+      // 3.1 as per the Handbook of Applied cryptography
+      q = q.Div(a,b)
+      r = r.Sub(a,qb.Mul(q,b))
+      x = x.Sub(x2,qx1.Mul(q,x1))
+      y = y.Sub(y2,qy1.Mul(q,y1))
+
+      // 3.2 as per the Handbook of Applied cryptography
+
+      a = a.Set(b)
+      b = b.Set(r)
+      x2 = x2.Set(x1)
+      x1 = x1.Set(x)
+      y2 = y2.Set(y1)
+      y1 = y1.Set(y)
+  }
+
+  // 4 as per the Handbook of Applied cryptography
+
+  d = d.Set(a)
+  x = x.Set(x2)
+  y = y.Set(y2)
+
+  return d,x,y
+}
+
+
+func generatePublicKey(phiOfN *big.Int) (*big.Int) {
+
+  x := big.NewInt(0)
+  y := big.NewInt(0)
+  e := big.NewInt(0)
+   for true {
+     e = getprimeNumber()
+     gcd := big.NewInt(0)
+     gcd = gcd.GCD(x,y,e,phiOfN)
+
+     if (gcd.Cmp(big.NewInt(1)) == 0) {
+       fmt.Println("\n \n In Euclidean X is ", x , " and Y is ", y)
+       break
+     }
+   }
+   return e
 }
 
 func getprimeNumber()(*big.Int) {
@@ -51,6 +139,7 @@ func getprimeNumber()(*big.Int) {
       return randomNumber
 
 }
+
 
 func generateNumber() (*big.Int) {
 

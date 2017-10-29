@@ -15,8 +15,23 @@ func main() {
   fmt.Println(" P is ", p)
   fmt.Println("Q is ", q)
 
-  
+  rsaAlgorithmKeyGeneration(p,q)
+}
 
+func rsaAlgorithmKeyGeneration(p *big.Int, q *big.Int) {
+
+  // AS per RSA algorithm, the modulus is N = p.q
+
+  N := big.NewInt(0)
+  N = N.Mul(p,q)
+  fmt.Println("N is ", N)
+
+  phiOfN := big.NewInt(0)
+  pSub1 := (big.NewInt(0)).Sub(p,big.NewInt(1))
+  qSub1 := (big.NewInt(0)).Sub(q,big.NewInt(1))
+  phiOfN = phiOfN.Mul(pSub1,qSub1)
+
+  fmt.Println(" PhiOfN is ", phiOfN)
 }
 
 func getprimeNumber()(*big.Int) {

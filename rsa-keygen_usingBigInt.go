@@ -9,26 +9,32 @@ import (
 
 func main() {
 
+  p := getprimeNumber()
+  q := getprimeNumber()
 
-//  randomNumber := big.NewInt(3694751408701)
+  fmt.Println(" P is ", p)
+  fmt.Println("Q is ", q)
 
+  
+
+}
+
+func getprimeNumber()(*big.Int) {
     randomNumber := generateNumber()
   // Check for a prime number
   // I'm hardcoding the value of K in primality test to 5
-  accuracyFactor := big.NewInt(5);
-  resultWhetherPrime := false
+    accuracyFactor := big.NewInt(5);
+    resultWhetherPrime := false
 
-  for (!resultWhetherPrime) {
-      randomNumber = generateNumber()
-      resultWhetherPrime = isaPrimeNumber(randomNumber,accuracyFactor)
-      if (resultWhetherPrime) {
-        break
+    for (!resultWhetherPrime) {
+        randomNumber = generateNumber()
+        resultWhetherPrime = isaPrimeNumber(randomNumber,accuracyFactor)
+        if (resultWhetherPrime) {
+          break
+        }
       }
-    }
+      return randomNumber
 
-    if resultWhetherPrime {
-      fmt.Println("Got a prime", randomNumber)
-    }
 }
 
 func generateNumber() (*big.Int) {
@@ -98,7 +104,6 @@ func isaPrimeNumber(number *big.Int, accuracyFactor *big.Int) (bool) {
     modValForX := big.NewInt(0)
     x, modValForX = x.DivMod(varNumber, exponentitalR, modValForX)
 
-    fmt.Println(x)
     if ( (modValForX.Cmp(big.NewInt(0))) == 0) {
     // Fixing value 10000000000 for calculation purpose
     // To resue the squareAndMultiple algorithm but not affect the modulo part
@@ -106,7 +111,6 @@ func isaPrimeNumber(number *big.Int, accuracyFactor *big.Int) (bool) {
       exponentitalR = squareAndMultiple(big.NewInt(2),
       r, big.NewInt(10000000))
 
-      fmt.Println("exponentitalR is ", exponentitalR, " and R is ", r)
       } else {
         break
       }

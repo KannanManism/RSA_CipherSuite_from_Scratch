@@ -2,7 +2,7 @@ package main
 
 import (
   "fmt"
-  //"math/rand"
+  "io/ioutil"
   "math/big"
   crypt "crypto/rand"
 )
@@ -17,7 +17,7 @@ func main() {
 
   N, publicKey, privateKey := rsaAlgorithmKeyGeneration(p,q)
 
-  Message := big.NewInt(2224455667)
+  Message := getprimeNumber()
   fmt.Println("Message was ", Message)
 
   Ciphertext := Encrypt(Message, N, publicKey)
@@ -25,6 +25,42 @@ func main() {
 
   recoveredMessage := Decrypt(Ciphertext, N, privateKey)
   fmt.Println("Message  was ", recoveredMessage)
+
+  WritePublicKeyInformationToFile(N, publicKey)
+  WritePrivateKeyInformationToFile(N, privateKey,p,q)
+}
+
+func WritePublicKeyInformationToFile(N *big.Int, publicKey *big.Int) {
+
+  NStringToWrite := N.String()
+  commaCharacter := ","
+  publicKeyStringToWrite := publicKey.String()
+
+  valueToWrite := NStringToWrite + commaCharacter + publicKeyStringToWrite
+
+  err := ioutil.WriteFile("publicKey.txt", []byte(valueToWrite), 0644)
+  if err != nil {
+    fmt.Println("Some Problem in writing to a file")
+  }
+
+}
+
+func WritePrivateKeyInformationToFile(N *big.Int, privateKey *big.Int, p *
+  big.Int, q *big.Int) {
+
+    NStringToWrite := N.String()
+    commaCharacter := ","
+    privateKeyStringToWrite := privateKey.String()
+    pStringToWrite := p.String()
+    qStringToWrite := q.String()
+
+    valueToWrite := NStringToWrite + commaCharacter + privateKeyStringToWrite +
+    commaCharacter + pStringToWrite + commaCharacter + qStringToWrite
+
+    err := ioutil.WriteFile("privateKey.txt", []byte(valueToWrite), 0644)
+    if err != nil {
+      fmt.Println("Some Problem in writing to a file")
+    }
 
 }
 

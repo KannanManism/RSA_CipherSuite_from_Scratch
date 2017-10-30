@@ -1,3 +1,4 @@
+// Copyright 2017 Venkatesh Gopal(vgopal3@jhu.edu), All rights reserved
 package main
 
 import (

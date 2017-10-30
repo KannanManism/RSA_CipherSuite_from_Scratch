@@ -15,11 +15,35 @@ func main() {
   fmt.Println(" P is ", p)
   fmt.Println("Q is ", q)
 
-  rsaAlgorithmKeyGeneration(p,q)
+  N, publicKey, privateKey := rsaAlgorithmKeyGeneration(p,q)
+
+  Message := big.NewInt(2224455667)
+  fmt.Println("Message was ", Message)
+
+  Ciphertext := Encrypt(Message, N, publicKey)
+  fmt.Println("Ciphertext was ", Ciphertext)
+
+  recoveredMessage := Decrypt(Ciphertext, N, privateKey)
+  fmt.Println("Message  was ", recoveredMessage)
 
 }
 
-func rsaAlgorithmKeyGeneration(p *big.Int, q *big.Int) {
+func Encrypt(Message *big.Int, N *big.Int, publicKey *big.Int) (*big.Int) {
+
+  Ciphertext := squareAndMultiple(Message, publicKey, N)
+  return Ciphertext
+
+}
+
+func Decrypt(Ciphertext *big.Int, N *big.Int, privateKey *big.Int) (*big.Int){
+
+  recoveredMessage := squareAndMultiple(Ciphertext, privateKey, N)
+  return recoveredMessage
+
+}
+
+func rsaAlgorithmKeyGeneration(p *big.Int, q *big.Int) (*big.Int,
+  *big.Int, *big.Int) {
 
   // AS per RSA algorithm, the modulus is N = p.q
 
@@ -63,6 +87,8 @@ func rsaAlgorithmKeyGeneration(p *big.Int, q *big.Int) {
   temp = temp.Mod(temp, phiOfN)
 
   fmt.Println("Printing", temp)
+
+  return N, e, privateKey
 
 }
 
@@ -191,7 +217,8 @@ func squareAndMultiple(a *big.Int, b *big.Int, c *big.Int) (*big.Int) {
   initialValue = initialValue.Mod(a,c)
 
   // Hold the initial value in result
-  result := big.NewInt(initialValue.Int64())
+  result := big.NewInt(0)
+  result = result.Set(initialValue)
 
   // Using the square and multipy algorithm to perform modular exponentation
   for i := 1; i < binExpLength; i++ {

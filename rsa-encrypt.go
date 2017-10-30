@@ -19,10 +19,8 @@ func main() {
   MessageInString := os.Args[2]
 
   N, publickey := ExtractDetailsFromPublicKeyFile(file_name)
-  fmt.Println("N and public key are ", N, publickey)
 
   Message := ConvertMessageToBigInt(MessageInString)
-  fmt.Println(" Message is ", Message)
 
   Ciphertext := Encrypt(Message, N, publickey)
   fmt.Println("Ciphertext is ", Ciphertext)

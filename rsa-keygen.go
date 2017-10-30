@@ -5,32 +5,33 @@ import (
   "io/ioutil"
   "math/big"
   crypt "crypto/rand"
+  "os"
 )
 
 func main() {
 
+  if len(os.Args) != 3 {
+    fmt.Println(" \n Follow command line specification \n ./rsa-keygen" +
+      "<publickey-file-name> <privatekey-file-name>\n")
+
+  } else {
+
+  publickeyFileName := os.Args[1]
+  privateKeyFileName := os.Args[2]
+
   p := getprimeNumber()
   q := getprimeNumber()
 
-  fmt.Println(" P is ", p)
-  fmt.Println("Q is ", q)
-
   N, publicKey, privateKey := rsaAlgorithmKeyGeneration(p,q)
 
-  Message := getprimeNumber()
-  fmt.Println("Message was ", Message)
+  WritePublicKeyInformationToFile(N, publicKey, publickeyFileName)
+  WritePrivateKeyInformationToFile(N, privateKey,p,q,privateKeyFileName )
 
-  Ciphertext := Encrypt(Message, N, publicKey)
-  fmt.Println("Ciphertext was ", Ciphertext)
-
-  recoveredMessage := Decrypt(Ciphertext, N, privateKey)
-  fmt.Println("Message  was ", recoveredMessage)
-
-  WritePublicKeyInformationToFile(N, publicKey)
-  WritePrivateKeyInformationToFile(N, privateKey,p,q)
+  }
 }
 
-func WritePublicKeyInformationToFile(N *big.Int, publicKey *big.Int) {
+func WritePublicKeyInformationToFile(N *big.Int, publicKey *big.Int,
+  publickeyFileName string) {
 
   NStringToWrite := N.String()
   commaCharacter := ","
@@ -38,7 +39,7 @@ func WritePublicKeyInformationToFile(N *big.Int, publicKey *big.Int) {
 
   valueToWrite := NStringToWrite + commaCharacter + publicKeyStringToWrite
 
-  err := ioutil.WriteFile("publicKey.txt", []byte(valueToWrite), 0644)
+  err := ioutil.WriteFile(publickeyFileName, []byte(valueToWrite), 0644)
   if err != nil {
     fmt.Println("Some Problem in writing to a file")
   }
@@ -46,7 +47,7 @@ func WritePublicKeyInformationToFile(N *big.Int, publicKey *big.Int) {
 }
 
 func WritePrivateKeyInformationToFile(N *big.Int, privateKey *big.Int, p *
-  big.Int, q *big.Int) {
+  big.Int, q *big.Int, privateKeyFileName string) {
 
     NStringToWrite := N.String()
     commaCharacter := ","
@@ -57,24 +58,10 @@ func WritePrivateKeyInformationToFile(N *big.Int, privateKey *big.Int, p *
     valueToWrite := NStringToWrite + commaCharacter + privateKeyStringToWrite +
     commaCharacter + pStringToWrite + commaCharacter + qStringToWrite
 
-    err := ioutil.WriteFile("privateKey.txt", []byte(valueToWrite), 0644)
+    err := ioutil.WriteFile(privateKeyFileName, []byte(valueToWrite), 0644)
     if err != nil {
       fmt.Println("Some Problem in writing to a file")
     }
-
-}
-
-func Encrypt(Message *big.Int, N *big.Int, publicKey *big.Int) (*big.Int) {
-
-  Ciphertext := squareAndMultiple(Message, publicKey, N)
-  return Ciphertext
-
-}
-
-func Decrypt(Ciphertext *big.Int, N *big.Int, privateKey *big.Int) (*big.Int){
-
-  recoveredMessage := squareAndMultiple(Ciphertext, privateKey, N)
-  return recoveredMessage
 
 }
 
@@ -85,17 +72,15 @@ func rsaAlgorithmKeyGeneration(p *big.Int, q *big.Int) (*big.Int,
 
   N := big.NewInt(0)
   N = N.Mul(p,q)
-  fmt.Println("N is ", N)
+
 
   phiOfN := big.NewInt(0)
   pSub1 := (big.NewInt(0)).Sub(p,big.NewInt(1))
   qSub1 := (big.NewInt(0)).Sub(q,big.NewInt(1))
   phiOfN = phiOfN.Mul(pSub1,qSub1)
 
-  fmt.Println(" PhiOfN is ", phiOfN)
-
   e := generatePublicKey(phiOfN)
-  fmt.Println(" Public Key is  ",e)
+
 
   eCopy := big.NewInt(0)
   eCopy = eCopy.Set(e)

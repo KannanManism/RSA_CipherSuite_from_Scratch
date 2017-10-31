@@ -286,8 +286,8 @@ func isaPrimeNumber(number *big.Int, accuracyFactor *big.Int) (bool) {
     // Fixing value 10000000000 for calculation purpose
     // To resue the squareAndMultiple algorithm but not affect the modulo part
       r = r.Add(r,big.NewInt(1))
-      exponentitalR = squareAndMultiple(big.NewInt(2),
-      r, big.NewInt(10000000))
+      exponentitalR = squareAndMultiplyWithoutMod(big.NewInt(2),
+      r)
 
       } else {
         break
@@ -297,8 +297,8 @@ func isaPrimeNumber(number *big.Int, accuracyFactor *big.Int) (bool) {
 
   r = r.Sub(r,big.NewInt(1))
 
-  exponentitalR = squareAndMultiple(big.NewInt(2),
-  r, big.NewInt(10000000))
+  exponentitalR = squareAndMultiplyWithoutMod(big.NewInt(2),
+  r)
 
   d := big.NewInt(0)
   d = d.Div(varNumber,exponentitalR)
@@ -317,7 +317,6 @@ func isaPrimeNumber(number *big.Int, accuracyFactor *big.Int) (bool) {
   }
 }
 
-
 func millerRabinPrimalityTest(number *big.Int, d *big.Int,
   r *big.Int) (bool) {
 
@@ -327,7 +326,7 @@ func millerRabinPrimalityTest(number *big.Int, d *big.Int,
   numberTemp := big.NewInt(0)
   numberTemp = (numberTemp.Sub(number, big.NewInt(4)))
   //aTemp := rand.Int63n(numberTemp.Int64()) + 2
-  aTemp := int64(100001)
+  aTemp := int64(1000000000001)
   a := big.NewInt(aTemp)
 
   x := squareAndMultiple(a,d,number)
@@ -353,5 +352,40 @@ func millerRabinPrimalityTest(number *big.Int, d *big.Int,
     }
   }
   return false
+
+}
+
+// Required since the previous function handles only exponentiation when I have
+// a mod value
+
+func squareAndMultiplyWithoutMod(number *big.Int, exponent *big.Int) (*big.Int){
+
+	value := big.NewInt(1)
+	//Start square and multiply
+	binExp := fmt.Sprintf("%b", exponent)
+  binExpLength := len(binExp)
+
+	if exponent == big.NewInt(1){
+		return number
+	}
+
+	for i := 1; i < binExpLength; i++{
+    // 49 is the ASCII representation of 1 and 48 is the ASCII representation
+    // of 0
+		if byte(binExp[i]) == byte(49){
+
+      // temp := big.NewInt(0)
+			value.Mul(value,value)
+			value.Mul(value,number)
+
+		}else{
+
+      // temp := big.NewInt(0)
+			value.Mul(value,value)
+
+		}
+	}
+
+	return value
 
 }

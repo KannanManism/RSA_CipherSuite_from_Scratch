@@ -55,7 +55,10 @@ func ExtractDetailsFromPrivateKeyFile(file_name string) (*big.Int, *big.Int,
     fmt.Println(" Error readng data from the file")
   } else {
 
-  FileContentSliced := strings.Split(string(FileContent), ",")
+  FileContentString := string(FileContent)
+  FileContentString = FileContentString[1 : (len(FileContentString) - 1)]
+
+  FileContentSliced := strings.Split(FileContentString, ",")
 
   NinString := FileContentSliced[0]
   privateKeyComponentInString := FileContentSliced[1]

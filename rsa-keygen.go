@@ -35,10 +35,13 @@ func WritePublicKeyInformationToFile(N *big.Int, publicKey *big.Int,
   publickeyFileName string) {
 
   NStringToWrite := N.String()
+  leftBracket := "("
+  rightBracket := ")"
   commaCharacter := ","
   publicKeyStringToWrite := publicKey.String()
 
-  valueToWrite := NStringToWrite + commaCharacter + publicKeyStringToWrite
+  valueToWrite := leftBracket + NStringToWrite + commaCharacter +
+  publicKeyStringToWrite + rightBracket
 
   err := ioutil.WriteFile(publickeyFileName, []byte(valueToWrite), 0644)
   if err != nil {
@@ -52,12 +55,15 @@ func WritePrivateKeyInformationToFile(N *big.Int, privateKey *big.Int, p *
 
     NStringToWrite := N.String()
     commaCharacter := ","
+    leftBracket := "("
+    rightBracket := ")"
     privateKeyStringToWrite := privateKey.String()
     pStringToWrite := p.String()
     qStringToWrite := q.String()
 
-    valueToWrite := NStringToWrite + commaCharacter + privateKeyStringToWrite +
-    commaCharacter + pStringToWrite + commaCharacter + qStringToWrite
+    valueToWrite := leftBracket + NStringToWrite + commaCharacter +
+     privateKeyStringToWrite + commaCharacter + pStringToWrite + commaCharacter+
+     qStringToWrite + rightBracket
 
     err := ioutil.WriteFile(privateKeyFileName, []byte(valueToWrite), 0644)
     if err != nil {

@@ -39,7 +39,10 @@ func ExtractDetailsFromPublicKeyFile(file_name string) (*big.Int, *big.Int) {
     fmt.Println(" Error readng data from the file")
   } else {
 
-  FileContentSliced := strings.Split(string(FileContent), ",")
+  FileContetString := string(FileContent)
+  FileContetString = FileContetString[1 : (len(FileContetString) - 1)]
+  
+  FileContentSliced := strings.Split(FileContetString, ",")
 
   NinString := FileContentSliced[0]
   publicKeyComponentInString := FileContentSliced[1]

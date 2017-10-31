@@ -5,7 +5,7 @@ scratch (Extended Euclidean Algorithm, Miller-Rabin Test for primality and Squar
 
 2. rsa-encrypt.go -> Performs RSA encryption given the public key file (N,e) and message in decimal format.
 
-3. rsa-decrypt.go -> Performs RSA decryption given the private key file (N,d) and ciphertext in decimal format.
+3. rsa-decrypt.go -> Performs RSA decryption given the private key file (N,d,p,q) and ciphertext in decimal format.
 
 Build Details :
 

@@ -185,13 +185,18 @@ func extendedEuclideanAlgorithm(a *big.Int, b *big.Int) (*big.Int,*big.Int,
 
 func generatePublicKey(phiOfN *big.Int) (*big.Int) {
 
-  x := big.NewInt(0)
-  y := big.NewInt(0)
+
   e := big.NewInt(0)
    for true {
      e = getprimeNumber()
-     gcd := big.NewInt(0)
-     gcd = gcd.GCD(x,y,e,phiOfN)
+
+    phiOfNCopy := big.NewInt(0)
+    phiOfNCopy = phiOfNCopy.Set(phiOfN)
+
+    eCopy := big.NewInt(0)
+    eCopy = eCopy.Set(e)
+
+    gcd,x,y := extendedEuclideanAlgorithm(eCopy,phiOfNCopy)
 
      if (gcd.Cmp(big.NewInt(1)) == 0) {
        fmt.Println("\n \n In Euclidean X is ", x , " and Y is ", y)
@@ -367,7 +372,9 @@ func millerRabinPrimalityTest(number *big.Int, d *big.Int,
 func squareAndMultiplyWithoutMod(number *big.Int, exponent *big.Int) (*big.Int){
 
 	value := big.NewInt(1)
-	//Start square and multiply
+	// Below line to avail the binary
+  // Operation performed later - > If 1, square and multiple
+  // If 0, only square
 	binExp := fmt.Sprintf("%b", exponent)
   binExpLength := len(binExp)
 
